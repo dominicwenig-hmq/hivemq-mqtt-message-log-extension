@@ -21,6 +21,7 @@
     <verbose>false</verbose>
     <payload>false</payload>
     <json>false</json>
+    <passwordinverbose>true</passwordinverbose>
     <publish-received>true</publish-received>
     <publish-send>true</publish-send>
     <client-connect>true</client-connect>

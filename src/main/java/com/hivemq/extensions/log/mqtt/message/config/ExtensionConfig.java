@@ -64,6 +64,8 @@ public interface ExtensionConfig {
 
     boolean isJson();
 
+    boolean isPasswordInVerbose();
+
     default boolean allDisabled() {
         return !isClientConnect() &&
                 !isClientDisconnect() &&

@@ -47,16 +47,16 @@ public class ClientInitializerImpl4_2 implements ClientInitializer {
     private void init() {
         if (config.isClientConnect() && config.isClientDisconnect()) {
             Services.eventRegistry().setClientLifecycleEventListener( //
-                    input -> new ConnectDisconnectEventListener(true, config.isVerbose(), config.isPayload(),
-                            config.isJson()));
+                    input -> new ConnectDisconnectEventListener(true, config.isVerbose(),
+                            config.isPayload(), config.isJson(), config.isPasswordInVerbose()));
         } else if (config.isClientDisconnect()) {
             Services.eventRegistry().setClientLifecycleEventListener( //
-                    input -> new ConnectDisconnectEventListener(false, config.isVerbose(), config.isPayload(),
-                            config.isJson()));
+                    input -> new ConnectDisconnectEventListener(false, config.isVerbose(),
+                            config.isPayload(), config.isJson(), config.isPasswordInVerbose()));
         } else if (config.isClientConnect()) {
             Services.interceptorRegistry().setConnectInboundInterceptorProvider( //
-                    input -> new ConnectInboundInterceptorImpl(config.isVerbose(), config.isPayload(),
-                            config.isJson()));
+                    input -> new ConnectInboundInterceptorImpl(config.isVerbose(),
+                            config.isPayload(), config.isJson(), config.isPasswordInVerbose()));
         }
     }
 

@@ -27,6 +27,7 @@ public class ExtensionConfigProperties implements ExtensionConfig {
     static final @NotNull String VERBOSE = "verbose";
     static final @NotNull String PAYLOAD = "payload";
     static final @NotNull String JSON = "json";
+    static final @NotNull String PASSWORDINVERBOSE = "passwordinverbose";
     static final @NotNull String CLIENT_CONNECT = "client-connect";
     static final @NotNull String CLIENT_DISCONNECT = "client-disconnect";
     static final @NotNull String CONNACK_SEND = "connack-send";
@@ -139,6 +140,10 @@ public class ExtensionConfigProperties implements ExtensionConfig {
 
     public boolean isJson() {
         return getForKey(JSON);
+    }
+
+    public boolean isPasswordInVerbose() {
+        return getForKey(PASSWORDINVERBOSE);
     }
 
     private boolean getForKey(final @NotNull String key) {

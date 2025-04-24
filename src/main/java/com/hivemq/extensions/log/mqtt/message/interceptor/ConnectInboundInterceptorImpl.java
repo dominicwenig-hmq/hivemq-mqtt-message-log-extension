@@ -33,11 +33,14 @@ public class ConnectInboundInterceptorImpl implements ConnectInboundInterceptor 
     private final boolean verbose;
     private final boolean payload;
     private final boolean json;
+    private final boolean passwordInVerbose;
 
-    public ConnectInboundInterceptorImpl(final boolean verbose, final boolean payload, final boolean json) {
+    public ConnectInboundInterceptorImpl(final boolean verbose, final boolean payload,
+                                         final boolean json, final boolean passwordInVerbose) {
         this.verbose = verbose;
         this.payload = payload;
         this.json = json;
+        this.passwordInVerbose = passwordInVerbose;
     }
 
     @Override
@@ -46,7 +49,7 @@ public class ConnectInboundInterceptorImpl implements ConnectInboundInterceptor 
             final @NotNull ConnectInboundOutput connectInboundOutput) {
         try {
             final ConnectPacket connectPacket = connectInboundInput.getConnectPacket();
-            MessageLogUtil.logConnect(connectPacket, verbose, payload, json);
+            MessageLogUtil.logConnect(connectPacket, verbose, payload, json, passwordInVerbose);
         } catch (final Exception e) {
             LOG.debug("Exception thrown at inbound connect logging: ", e);
         }
