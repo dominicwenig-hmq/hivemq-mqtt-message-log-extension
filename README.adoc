@@ -74,6 +74,7 @@ An example configuration file is available in `conf/examples/`, which removes th
 |verbose |Log detailed information about an MQTT event | false
 |payload |Log the payload of a message  | true
 |json |Log the MQTT events in JSON format | false
+|passwordinverbose |Log the password when verbose is `true` | true
 |===
 
 Normally, events only log important information.
@@ -85,6 +86,8 @@ CAUTION: use `verbose=true` very carefully as it will flood your log immediately
 Set the `payload` property to `false` if you want to suppress logging payloads (i.e. for publish-received, publish-send, and will messages).
 
 Set the `json` property to `true` if you want to log the MQTT events in a JSON format.
+
+Set the `passwordinverbose` property to `false` to prevent logging the password, even when verbose is `true`.
 
 == First Steps
 
@@ -116,7 +119,7 @@ User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value
 [source,bash]
 ----
 2025-04-22 16:55:37,192 INFO  - {"Event": "Received CONNECT", "Client": "clientid", "Protocol version": "V_5", "Clean Start": "true",
-"Session Expiry Interval": "0", "Keep Alive": "60", "Maximum Packet Size": "268435460", 
+"Session Expiry Interval": "0", "Keep Alive": "60", "Maximum Packet Size": "268435460",
 "Receive Maximum": "65535", "Topic Alias Maximum": "0", "Request Problem Information": "true",
 "Request Response Information": "false",  "Username": "username", "Password": "password",
 "Auth Method": "null", "Auth Data (Base64)": "null",
