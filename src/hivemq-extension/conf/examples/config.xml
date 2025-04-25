@@ -10,6 +10,7 @@
     <verbose>false</verbose>
     <payload>true</payload>
     <json>false</json>
+    <passwordinverbose>true</passwordinverbose>
 
     <!--Event settings-->
     <publish-received>false</publish-received>

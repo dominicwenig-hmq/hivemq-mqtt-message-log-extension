@@ -41,6 +41,9 @@ public class ExtensionConfigXml implements ExtensionConfig {
     @XmlElement(name = "json", defaultValue = "false")
     private boolean json = false;
 
+    @XmlElement(name = "passwordinverbose", defaultValue = "true")
+    private boolean passwordinverbose = true;
+
     @XmlElement(name = "publish-received", defaultValue = "true")
     private boolean publishReceived = true;
 
@@ -108,6 +111,10 @@ public class ExtensionConfigXml implements ExtensionConfig {
 
     public boolean isJson() {
         return json;
+    }
+
+    public boolean isPasswordInVerbose() {
+        return passwordinverbose;
     }
 
     public boolean isPublishReceived() {
@@ -195,6 +202,8 @@ public class ExtensionConfigXml implements ExtensionConfig {
                 payload +
                 ", json=" +
                 json +
+                ", passwordInVerbose=" +
+                passwordinverbose +
                 ", publishReceived=" +
                 publishReceived +
                 ", publishSend=" +

@@ -192,7 +192,8 @@ public class MessageLogUtil {
             final @NotNull ConnectPacket connectPacket,
             final boolean verbose,
             final boolean payload,
-            final boolean json) {
+            final boolean json,
+            final boolean passwordInVerbose) {
         if (!verbose) {
             if (json) {
                 LOG.info("{\"Event\": \"Received CONNECT\"," +
@@ -218,20 +219,25 @@ public class MessageLogUtil {
         final String userPropertiesAsString = getUserPropertiesAsString(connectPacket.getUserProperties(), json);
         final String passwordAsString = getStringFromByteBuffer(connectPacket.getPassword().orElse(null), false);
         final String passwordProperty;
-        if (StringUtils.isAsciiPrintable(passwordAsString) || passwordAsString == null) {
-            if (json) {
-                passwordProperty = "\"Password\": \"" + passwordAsString + "\"";
+
+        if(passwordInVerbose == true) {
+            if (StringUtils.isAsciiPrintable(passwordAsString) || passwordAsString == null) {
+                if (json) {
+                    passwordProperty = "\"Password\": \"" + passwordAsString + "\"";
+                } else {
+                    passwordProperty = "Password: '" + passwordAsString + "'";
+                }
             } else {
-                passwordProperty = "Password: '" + passwordAsString + "'";
+                if (json) {
+                    passwordProperty =
+                            "\"Password (Hex)\": \"" + getHexStringFromByteBuffer(connectPacket.getPassword().orElse(null)) + "\"";
+                } else {
+                    passwordProperty =
+                            "Password (Hex): '" + getHexStringFromByteBuffer(connectPacket.getPassword().orElse(null)) + "'";
+                }
             }
         } else {
-            if (json) {
-                passwordProperty =
-                        "\"Password (Hex)\": \"" + getHexStringFromByteBuffer(connectPacket.getPassword().orElse(null)) + "\"";
-            } else {
-                passwordProperty =
-                        "Password (Hex): '" + getHexStringFromByteBuffer(connectPacket.getPassword().orElse(null)) + "'";
-            }
+            passwordProperty = null;
         }
 
         final String authDataAsString;
@@ -249,62 +255,119 @@ public class MessageLogUtil {
             willString = "";
         }
 
-        if (json) {
-            LOG.info(
-                    "{\"Event\": \"Received CONNECT\"," +
-                            " \"Client\": \"{}\"," +
-                            " \"Protocol version\": \"{}\"," +
-                            " \"Clean Start\": \"{}\"," +
-                            " \"Session Expiry Interval\": \"{}\"," +
-                            " \"Keep Alive\": \"{}\"," +
-                            " \"Maximum Packet Size\": \"{}\"," +
-                            " \"Receive Maximum\": \"{}\"," +
-                            " \"Topic Alias Maximum\": \"{}\"," +
-                            " \"Request Problem Information\": \"{}\"," +
-                            " \"Request Response Information\": \"{}\", " +
-                            " \"Username\": \"{}\"," +
-                            " {}," +
-                            " \"Auth Method\": \"{}\"," +
-                            " \"Auth Data (Base64)\": \"{}\"," +
-                            " {}{}}",
-                    connectPacket.getClientId(),
-                    connectPacket.getMqttVersion().name(),
-                    connectPacket.getCleanStart(),
-                    connectPacket.getSessionExpiryInterval(),
-                    connectPacket.getKeepAlive(),
-                    connectPacket.getMaximumPacketSize(),
-                    connectPacket.getReceiveMaximum(),
-                    connectPacket.getTopicAliasMaximum(),
-                    connectPacket.getRequestProblemInformation(),
-                    connectPacket.getRequestResponseInformation(),
-                    connectPacket.getUserName().orElse(null),
-                    passwordProperty,
-                    connectPacket.getAuthenticationMethod().orElse(null),
-                    authDataAsString,
-                    userPropertiesAsString,
-                    willString);
+        if(passwordInVerbose == true) {
+            if (json) {
+                LOG.info(
+                        "{\"Event\": \"Received CONNECT\"," +
+                                " \"Client\": \"{}\"," +
+                                " \"Protocol version\": \"{}\"," +
+                                " \"Clean Start\": \"{}\"," +
+                                " \"Session Expiry Interval\": \"{}\"," +
+                                " \"Keep Alive\": \"{}\"," +
+                                " \"Maximum Packet Size\": \"{}\"," +
+                                " \"Receive Maximum\": \"{}\"," +
+                                " \"Topic Alias Maximum\": \"{}\"," +
+                                " \"Request Problem Information\": \"{}\"," +
+                                " \"Request Response Information\": \"{}\", " +
+                                " \"Username\": \"{}\"," +
+                                " {}," +
+                                " \"Auth Method\": \"{}\"," +
+                                " \"Auth Data (Base64)\": \"{}\"," +
+                                " {}{}}",
+                        connectPacket.getClientId(),
+                        connectPacket.getMqttVersion().name(),
+                        connectPacket.getCleanStart(),
+                        connectPacket.getSessionExpiryInterval(),
+                        connectPacket.getKeepAlive(),
+                        connectPacket.getMaximumPacketSize(),
+                        connectPacket.getReceiveMaximum(),
+                        connectPacket.getTopicAliasMaximum(),
+                        connectPacket.getRequestProblemInformation(),
+                        connectPacket.getRequestResponseInformation(),
+                        connectPacket.getUserName().orElse(null),
+                        passwordProperty,
+                        connectPacket.getAuthenticationMethod().orElse(null),
+                        authDataAsString,
+                        userPropertiesAsString,
+                        willString);
+            } else {
+                LOG.info(
+                        "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'," +
+                                " Keep Alive: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}', Topic Alias Maximum: '{}'," +
+                                " Request Problem Information: '{}', Request Response Information: '{}', " +
+                                " Username: '{}', {}, Auth Method: '{}', Auth Data (Base64): '{}', {}{}",
+                        connectPacket.getClientId(),
+                        connectPacket.getMqttVersion().name(),
+                        connectPacket.getCleanStart(),
+                        connectPacket.getSessionExpiryInterval(),
+                        connectPacket.getKeepAlive(),
+                        connectPacket.getMaximumPacketSize(),
+                        connectPacket.getReceiveMaximum(),
+                        connectPacket.getTopicAliasMaximum(),
+                        connectPacket.getRequestProblemInformation(),
+                        connectPacket.getRequestResponseInformation(),
+                        connectPacket.getUserName().orElse(null),
+                        passwordProperty,
+                        connectPacket.getAuthenticationMethod().orElse(null),
+                        authDataAsString,
+                        userPropertiesAsString,
+                        willString);
+            }
         } else {
-            LOG.info(
-                    "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'," +
-                            " Keep Alive: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}', Topic Alias Maximum: '{}'," +
-                            " Request Problem Information: '{}', Request Response Information: '{}', " +
-                            " Username: '{}', {}, Auth Method: '{}', Auth Data (Base64): '{}', {}{}",
-                    connectPacket.getClientId(),
-                    connectPacket.getMqttVersion().name(),
-                    connectPacket.getCleanStart(),
-                    connectPacket.getSessionExpiryInterval(),
-                    connectPacket.getKeepAlive(),
-                    connectPacket.getMaximumPacketSize(),
-                    connectPacket.getReceiveMaximum(),
-                    connectPacket.getTopicAliasMaximum(),
-                    connectPacket.getRequestProblemInformation(),
-                    connectPacket.getRequestResponseInformation(),
-                    connectPacket.getUserName().orElse(null),
-                    passwordProperty,
-                    connectPacket.getAuthenticationMethod().orElse(null),
-                    authDataAsString,
-                    userPropertiesAsString,
-                    willString);
+            if (json) {
+                LOG.info(
+                        "{\"Event\": \"Received CONNECT\"," +
+                                " \"Client\": \"{}\"," +
+                                " \"Protocol version\": \"{}\"," +
+                                " \"Clean Start\": \"{}\"," +
+                                " \"Session Expiry Interval\": \"{}\"," +
+                                " \"Keep Alive\": \"{}\"," +
+                                " \"Maximum Packet Size\": \"{}\"," +
+                                " \"Receive Maximum\": \"{}\"," +
+                                " \"Topic Alias Maximum\": \"{}\"," +
+                                " \"Request Problem Information\": \"{}\"," +
+                                " \"Request Response Information\": \"{}\", " +
+                                " \"Username\": \"{}\"," +
+                                " \"Auth Method\": \"{}\"," +
+                                " \"Auth Data (Base64)\": \"{}\"," +
+                                " {}{}}",
+                        connectPacket.getClientId(),
+                        connectPacket.getMqttVersion().name(),
+                        connectPacket.getCleanStart(),
+                        connectPacket.getSessionExpiryInterval(),
+                        connectPacket.getKeepAlive(),
+                        connectPacket.getMaximumPacketSize(),
+                        connectPacket.getReceiveMaximum(),
+                        connectPacket.getTopicAliasMaximum(),
+                        connectPacket.getRequestProblemInformation(),
+                        connectPacket.getRequestResponseInformation(),
+                        connectPacket.getUserName().orElse(null),
+                        connectPacket.getAuthenticationMethod().orElse(null),
+                        authDataAsString,
+                        userPropertiesAsString,
+                        willString);
+            } else {
+                LOG.info(
+                        "Received CONNECT from client '{}': Protocol version: '{}', Clean Start: '{}', Session Expiry Interval: '{}'," +
+                                " Keep Alive: '{}', Maximum Packet Size: '{}', Receive Maximum: '{}', Topic Alias Maximum: '{}'," +
+                                " Request Problem Information: '{}', Request Response Information: '{}', " +
+                                " Username: '{}', Auth Method: '{}', Auth Data (Base64): '{}', {}{}",
+                        connectPacket.getClientId(),
+                        connectPacket.getMqttVersion().name(),
+                        connectPacket.getCleanStart(),
+                        connectPacket.getSessionExpiryInterval(),
+                        connectPacket.getKeepAlive(),
+                        connectPacket.getMaximumPacketSize(),
+                        connectPacket.getReceiveMaximum(),
+                        connectPacket.getTopicAliasMaximum(),
+                        connectPacket.getRequestProblemInformation(),
+                        connectPacket.getRequestResponseInformation(),
+                        connectPacket.getUserName().orElse(null),
+                        connectPacket.getAuthenticationMethod().orElse(null),
+                        authDataAsString,
+                        userPropertiesAsString,
+                        willString);
+            }
         }
     }
 
